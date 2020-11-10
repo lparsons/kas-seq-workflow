@@ -1,0 +1,44 @@
+# path or URL to sample sheet (TSV format, columns: sample, condition, ...)
+samples: samples.tsv
+# path or URL to sequencing unit sheet (TSV format, columns: sample, unit, fq1, fq2, 
+# strandedness). Units are technical replicates (e.g. lanes, or resequencing of the 
+# same biological sample).If the column "strandedness" is present (which is optional), 
+# can be empty or has one of these values: none, yes or reverse. none is for unstranded 
+# protocols, yes an reverse follow the nomenclature used in `htseq-count --reverse` 
+# which is referenced in STAR manual section 7, "Counting number of reads per gene".
+
+units: units.tsv
+
+trimming:
+  # skip trimming: false or true
+  skip: false
+  # the sequencing adapters
+  read1-adapter: AGATCGGAAGAGCACACGTCTGAACTCCAGTCA
+  read2-adapter: AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
+
+ref:
+  # reference fasta file
+  fasta: "path/to/reference.fasta"
+  # the STAR index (will be generated if not found)
+  index: "path/to/star/index"
+  # gtf file with transcripts
+  annotation: "path/to/annotation.gtf"
+
+pca:
+  labels:
+    # columns of sample sheet to use for PCA
+    - condition
+
+diffexp:
+  # contrasts for the deseq2 results method
+  contrasts:
+    treated-vs-untreated:
+      - treated
+      - untreated
+
+params:
+  fastqc: ""
+  star: ""
+  cutadapt-se: ""
+  cutadapt-pe: ""
+
