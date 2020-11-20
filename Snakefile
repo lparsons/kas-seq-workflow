@@ -17,27 +17,6 @@ units.index = units.index.set_levels([i.astype(str) for i in units.index.levels]
 validate(units, schema="schemas/units.schema.yaml")
 
 
-
-def get_fq(wildcards):
-    if config["trimming"]["skip"]:
-        # no trimming, use raw reads
-        u = units.loc[(wildcards.sample, wildcards.unit), ["fq1", "fq2"]].dropna()
-        if is_single_end(**wildcards):
-            return { 'fq1': f"{u.fq1}" }
-        else:
-            return { 'fq1': f"{u.fq1}",
-                     'fq2': f"{u.fq2}" }
-
-    else:
-        # yes trimming, use trimmed data
-        if not is_single_end(**wildcards):
-            # paired-end sample
-            return dict(zip(
-                ['fq1', 'fq2' ],
-                expand("trimmed/{sample}-{unit}.{group}.fastq.gz", group=[1, 2], **wildcards)))
-        # single end sample
-        return { 'fq1': "trimmed/{sample}-{unit}.fastq.gz".format(**wildcards) }
-
 ##### target rules #####
 
 rule all:
@@ -46,6 +25,11 @@ rule all:
         #        "results/diffexp/{contrast}.ma-plot.svg"],
         #       contrast=config["diffexp"]["contrasts"]),
         #"results/pca.svg",
+        expand("bwa_mem/{unit.sample}-{unit.unit}.bam", unit=units.itertuples()),
+        expand("results/coverage_plots/{unit.sample}-{unit.unit}_coverage.bw", unit=units.itertuples()),
+        expand("results/macs2/{unit.sample}-{unit.unit}_peaks.xls", unit=units.itertuples()),
+        "results/plot_heatmap/heatmap.png",
+        "results/plot_profile/profile.png",
         "qc/multiqc_report.html"
 
 ##### setup singularity #####
@@ -64,7 +48,9 @@ report: "report/workflow.rst"
 
 include: "rules/common.smk"
 include: "rules/trim.smk"
-#include: "rules/align.smk"
-#include: "rules/diffexp.smk"
 include: "rules/qc.smk"
+include: "rules/align.smk"
+include: "rules/coverage_plots.smk"
+include: "rules/macs.smk"
+#include: "rules/diffexp.smk"
 

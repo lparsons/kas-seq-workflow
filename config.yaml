@@ -18,12 +18,12 @@ trimming:
 
 ref:
   # reference fasta file
-  fasta: "path/to/reference.fasta"
-  # the STAR index (will be generated if not found)
-  index: "path/to/star/index"
+  fasta: "hg38/genome/fasta/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa"
   # gtf file with transcripts
-  annotation: "path/to/annotation.gtf"
-
+  annotation: "hg38/annotation/Homo_sapiens.GRCh38.101.gtf"
+  # the length of the "mappable" genome
+  # https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html
+  effective_genome_size: "2701495761"
 pca:
   labels:
     # columns of sample sheet to use for PCA
@@ -38,7 +38,7 @@ diffexp:
 
 params:
   fastqc: ""
-  star: ""
+  bwa-mem2: ""
   cutadapt-se: ""
   cutadapt-pe: ""
 
