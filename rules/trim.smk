@@ -7,8 +7,8 @@ rule symlink_fastq_pe:
     input:
         get_fastq
     output:
-        fastq1="symlink_fastq/{sample}-{unit}.1.fastq.gz",
-        fastq2="symlink_fastq/{sample}-{unit}.2.fastq.gz",
+        fastq1="results/symlink_fastq/{sample}-{unit}.1.fastq.gz",
+        fastq2="results/symlink_fastq/{sample}-{unit}.2.fastq.gz",
     log:
         "logs/symlink_fastq/{sample}-{unit}.log"
     shell:
@@ -21,7 +21,7 @@ rule symlink_fastq:
     input:
         get_fastq
     output:
-        fastq="symlink_fastq/{sample}-{unit}.fastq.gz",
+        fastq="results/symlink_fastq/{sample}-{unit}.fastq.gz",
     log:
         "logs/symlink_fastq/{sample}-{unit}.log"
     shell:
@@ -31,12 +31,12 @@ rule symlink_fastq:
 
 rule cutadapt_pe:
     input:
-        ["symlink_fastq/{sample}-{unit}.1.fastq.gz",
-         "symlink_fastq/{sample}-{unit}.2.fastq.gz"]
+        ["results/symlink_fastq/{sample}-{unit}.1.fastq.gz",
+         "results/symlink_fastq/{sample}-{unit}.2.fastq.gz"]
     output:
-        fastq1="trimmed/{sample}-{unit}.1.fastq.gz",
-        fastq2="trimmed/{sample}-{unit}.2.fastq.gz",
-        qc="trimmed/{sample}-{unit}.qc.txt"
+        fastq1="results/trimmed/{sample}-{unit}.1.fastq.gz",
+        fastq2="results/trimmed/{sample}-{unit}.2.fastq.gz",
+        qc="results/trimmed/{sample}-{unit}.qc.txt"
     params:
         adapters="-a {} -A {} ".format(
                 config["trimming"]["read1-adapter"],
@@ -51,10 +51,10 @@ rule cutadapt_pe:
 
 rule cutadapt:
     input:
-        "symlink_fastq/{sample}-{unit}.fastq.gz"
+        "results/symlink_fastq/{sample}-{unit}.fastq.gz"
     output:
-        fastq="trimmed/{sample}-{unit}.fastq.gz",
-        qc="trimmed/{sample}-{unit}.qc.txt"
+        fastq="results/trimmed/{sample}-{unit}.fastq.gz",
+        qc="results/trimmed/{sample}-{unit}.qc.txt"
     params:
         "-a {} {}".format(config["trimming"]["read1-adapter"], config["params"]["cutadapt-se"])
     log:

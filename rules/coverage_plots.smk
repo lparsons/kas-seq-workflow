@@ -1,11 +1,14 @@
 rule bam_coverage:
     input:
-        bam="dedup/{sample}-{unit}.bam",
-        bai="dedup/{sample}-{unit}.bam.bai",
+        bam="results/dedup/{sample}-{unit}.bam",
+        bai="results/dedup/{sample}-{unit}.bam.bai",
     output:
-        "results/bam_coverage/{sample}-{unit}_rpgc_normalized_coverage.bw"
+        "results/bam_coverage/{sample}-{unit}_rpgc_normalized_coverage.bw",
+        #report("results/bam_coverage/{sample}-{unit}_rpgc_normalized_coverage.bw",
+        #        caption="../report/normalized_coverage.rst",
+        #        category="Normalized KAS signal across genome")
     log:
-        "logs/deeptools/bam_coverage/{sample}-{unit}.log"
+        "logs/bam_coverage/{sample}-{unit}.log"
     params:
         ""
     threads:
@@ -28,6 +31,9 @@ rule compute_matrix:
          score=expand("results/bam_coverage/{unit.sample}-{unit.unit}_rpgc_normalized_coverage.bw", unit=units.itertuples())
     output:
         matrix_gz="results/matrix_files/matrix.gz",
+        #matrix_gz=report("results/matrix_files/matrix.gz",
+        #        caption="../report/matrix.rst",
+        #        category="Normalized KAS signal across transcripts"),
         matrix_tab="results/matrix_files/matrix.tab",
         matrix_bed="results/matrix_files/matrix.bed"
     log:
@@ -62,10 +68,12 @@ rule plot_heatmap:
     input:
         matrix_gz="results/matrix_files/matrix.gz",
     output:
-        heatmap_img="results/plot_heatmap/heatmap.png",  # required
+        heatmap_img=report("results/plot_heatmap/heatmap.png",
+                caption="../report/heatmap.rst",
+                category="Normalized KAS signal across transcripts"),
         # optional output files
         regions="results/plot_heatmap/heatmap_regions.bed",
-        heatmap_matrix="results/plot_heatmap/heatmap_matrix.tab"
+        heatmap_matrix="results/plot_heatmap/heatmap_matrix.tab",
     log:
         "logs/deeptools/heatmap.log"
     params:
@@ -81,10 +89,12 @@ rule plot_profile:
     input:
          matrix_gz="results/matrix_files/matrix.gz",
     output:
-        plot_img="results/plot_profile/profile.png",  # required
+        plot_img=report("results/plot_profile/profile.png",
+                caption="../report/profile.rst",
+                category="Normalized KAS signal across transcripts"),
         # optional output files
         regions="results/plot_profile/regions.bed",
-        data="results/plot_profile/data.tab"
+        data="results/plot_profile/data.tab",
     log:
         "logs/deeptools/plot_profile.log"
     params:

@@ -7,7 +7,7 @@ rule bwa_mem:
         index_pac="{genome}.pac".format(genome=config["ref"]["fasta"]),
         index_sa="{genome}.sa".format(genome=config["ref"]["fasta"])
     output:
-        "bwa_mem/{sample}-{unit}.bam"
+        "results/bwa_mem/{sample}-{unit}.bam"
     log:
         "logs/bwa_mem/{sample}-{unit}.log"
     params:
@@ -25,9 +25,9 @@ rule bwa_mem:
 
 rule samtools_index:
     input:
-        "dedup/{sample}-{unit}.bam"
+        "results/dedup/{sample}-{unit}.bam"
     output:
-        "dedup/{sample}-{unit}.bam.bai"
+        "results/dedup/{sample}-{unit}.bam.bai"
     params:
         "" # optional params string
     wrapper:
@@ -36,10 +36,10 @@ rule samtools_index:
 
 rule mark_duplicates:
     input:
-        "bwa_mem/{sample}-{unit}.bam"
+        "results/bwa_mem/{sample}-{unit}.bam"
     output:
-        bam="dedup/{sample}-{unit}.bam",
-        metrics="dedup/{sample}-{unit}.metrics.txt"
+        bam="results/dedup/{sample}-{unit}.bam",
+        metrics="results/dedup/{sample}-{unit}.metrics.txt"
     log:
         "logs/picard/dedup/{sample}-{unit}.log"
     params:

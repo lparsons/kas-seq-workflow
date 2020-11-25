@@ -11,9 +11,9 @@ def get_fq(wildcards):
         # yes trimming, use trimmed data
         if not is_single_end(wildcards.sample, wildcards.unit):
             # paired-end sample
-            return expand("trimmed/{sample}-{unit}.{group}.fastq.gz", group=[1, 2], sample=wildcards.sample, unit=wildcards.unit)
+            return expand("results/trimmed/{sample}-{unit}.{group}.fastq.gz", group=[1, 2], sample=wildcards.sample, unit=wildcards.unit)
         # single end sample
-        return [ "trimmed/{sample}-{unit}.fastq.gz".format(sample=wildcards.sample, unit=wildcards.unit) ]
+        return [ "results/trimmed/{sample}-{unit}.fastq.gz".format(sample=wildcards.sample, unit=wildcards.unit) ]
 
 
 def get_fastq_group(wildcards):
@@ -49,9 +49,9 @@ rule fastqc:
 
 rule samtools_stats:
     input:
-        "bwa_mem/{sample}-{unit}.bam"
+        "results/bwa_mem/{sample}-{unit}.bam"
     output:
-        "samtools_stats/{sample}-{unit}.txt"
+        "qc/samtools_stats/{sample}-{unit}.txt"
     params:
         extra="",                       # Optional: extra arguments.
     log:
@@ -62,17 +62,17 @@ rule samtools_stats:
 
 rule deeptools_plot_coverage:
     input:
-        bamfiles=expand("dedup/{unit.sample}-{unit.unit}.bam", unit=units.itertuples()),
-        bamindicies=expand("dedup/{unit.sample}-{unit.unit}.bam.bai", unit=units.itertuples()),
+        bamfiles=expand("results/dedup/{unit.sample}-{unit.unit}.bam", unit=units.itertuples()),
+        bamindicies=expand("results/dedup/{unit.sample}-{unit.unit}.bam.bai", unit=units.itertuples()),
     output:
-        plotfile="deeptools/plot_coverage.png",
-        coverage="deeptools/plot_coverage.tab"
+        plotfile="qc/plot_coverage.png",
+        coverage="qc/plot_coverage.tab"
     params:
         ""
     threads:
         8
     log:
-        "logs/deeptools/plot_coverage.log"
+        "logs/plot_coverage.log"
     conda:
         "../envs/deeptools.yml"
     shell:
@@ -90,16 +90,16 @@ rule deeptools_plot_coverage:
 
 rule deeptools_multibamsummary:
     input:
-        bamfiles=expand("dedup/{unit.sample}-{unit.unit}.bam", unit=units.itertuples()),
-        bamindicies=expand("dedup/{unit.sample}-{unit.unit}.bam.bai", unit=units.itertuples()),
+        bamfiles=expand("results/dedup/{unit.sample}-{unit.unit}.bam", unit=units.itertuples()),
+        bamindicies=expand("results/dedup/{unit.sample}-{unit.unit}.bam.bai", unit=units.itertuples()),
     output:
-        multibamsummary="deeptools/multibamsummary.npz",
+        multibamsummary="qc/multibamsummary.npz",
     params:
         ""
     threads:
         8
     log:
-        "logs/deeptools/multibamsummary.log"
+        "logs/multibamsummary.log"
     conda:
         "../envs/deeptools.yml"
     shell:
@@ -117,14 +117,14 @@ rule deeptools_multibamsummary:
 
 rule deeptools_plot_correlation:
     input:
-        cordata="deeptools/multibamsummary.npz",
+        cordata="qc/multibamsummary.npz",
     output:
-        plotfile="deeptools/plot_correlation.png",
-        cormatrix="deeptools/plot_correlation_matrix.tsv",
+        plotfile="qc/plot_correlation.png",
+        cormatrix="qc/plot_correlation_matrix.tsv",
     params:
         ""
     log:
-        "logs/deeptools/plot_correlation.log"
+        "logs/plot_correlation.log"
     conda:
         "../envs/deeptools.yml"
     shell:
@@ -142,18 +142,18 @@ rule deeptools_plot_correlation:
 
 rule deeptools_bampefragmentsize:
     input:
-        bamfiles=expand("dedup/{unit.sample}-{unit.unit}.bam", unit=units.itertuples()),
-        bamindicies=expand("dedup/{unit.sample}-{unit.unit}.bam.bai", unit=units.itertuples()),
+        bamfiles=expand("results/dedup/{unit.sample}-{unit.unit}.bam", unit=units.itertuples()),
+        bamindicies=expand("results/dedup/{unit.sample}-{unit.unit}.bam.bai", unit=units.itertuples()),
     output:
-        histogram="deeptools/bampefragmentsize_histogram.png",
-        table="deeptools/bampefragmentsize_table.tsv",
-        rawfragmentlengths="deeptools/bampefragmentsize_rawfragmentlengths.tsv",
+        histogram="qc/bampefragmentsize_histogram.png",
+        table="qc/bampefragmentsize_table.tsv",
+        rawfragmentlengths="qc/bampefragmentsize_rawfragmentlengths.tsv",
     params:
         ""
     threads:
         8
     log:
-        "logs/deeptools/plot_correlation.log"
+        "logs/bampefragmentsize.log"
     conda:
         "../envs/deeptools.yml"
     shell:
@@ -203,18 +203,18 @@ rule deeptools_bampefragmentsize:
 
 rule plot_fingerprint:
     input:
-        bam_files=expand("dedup/{unit.sample}-{unit.unit}.bam", unit=units.itertuples()),
-        bam_idx=expand("dedup/{unit.sample}-{unit.unit}.bam.bai", unit=units.itertuples()),
+        bam_files=expand("results/dedup/{unit.sample}-{unit.unit}.bam", unit=units.itertuples()),
+        bam_idx=expand("results/dedup/{unit.sample}-{unit.unit}.bam.bai", unit=units.itertuples()),
     output:
         # Please note that --plotFile and --outRawCounts are exclusively defined via output files.
         # Usable output variables, their extensions and which option they implicitly call are listed here:
         #         https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/deeptools/plotfingerprint.html.
-        fingerprint="deeptools/plot_fingerprint.png",  # required
+        fingerprint="qc/plot_fingerprint.png",  # required
         # optional output
-        counts="deeptools/plot_fingerprint_raw_counts.tab",
-        qc_metrics="deeptools/plot_fingerprint_qc_metrics.txt"
+        counts="qc/plot_fingerprint_raw_counts.tab",
+        qc_metrics="qc/plot_fingerprint_qc_metrics.txt"
     log:
-        "logs/deeptools/plot_fingerprint.log"
+        "logs/plot_fingerprint.log"
     params:
         # optional parameters
         ""
@@ -227,20 +227,20 @@ rule plot_fingerprint:
 rule multiqc:
     input:
         get_fastqc,
-        expand("trimmed/{unit.sample}-{unit.unit}.qc.txt", unit=units.itertuples()),
-        expand("samtools_stats/{unit.sample}-{unit.unit}.txt", unit=units.itertuples()),
-        expand("dedup/{unit.sample}-{unit.unit}.metrics.txt", unit=units.itertuples()),
+        expand("results/trimmed/{unit.sample}-{unit.unit}.qc.txt", unit=units.itertuples()),
+        expand("qc/samtools_stats/{unit.sample}-{unit.unit}.txt", unit=units.itertuples()),
+        expand("results/dedup/{unit.sample}-{unit.unit}.metrics.txt", unit=units.itertuples()),
         expand("results/macs2/{unit.sample}-{unit.unit}_peaks.xls", unit=units.itertuples()),
-        "deeptools/plot_coverage.tab",
-        "logs/deeptools/plot_coverage.log",
-        "deeptools/plot_correlation_matrix.tsv",
-        "deeptools/bampefragmentsize_table.tsv",
-        "deeptools/bampefragmentsize_rawfragmentlengths.tsv",
-        "deeptools/plot_fingerprint_qc_metrics.txt",
-        "deeptools/plot_fingerprint_raw_counts.tab",
+        "qc/plot_coverage.tab",
+        "logs/plot_coverage.log",
+        "qc/plot_correlation_matrix.tsv",
+        "qc/bampefragmentsize_table.tsv",
+        "qc/bampefragmentsize_rawfragmentlengths.tsv",
+        "qc/plot_fingerprint_qc_metrics.txt",
+        "qc/plot_fingerprint_raw_counts.tab",
         "results/plot_profile/data.tab",
     output:
-        "qc/multiqc_report.html"
+        report("qc/multiqc_report.html", caption="../report/multiqc.rst", category="Quality Control")
     params:
         "--config multiqc_config.yaml"
     log:
