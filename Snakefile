@@ -29,8 +29,15 @@ rule all:
         expand("results/macs2/{unit.sample}-{unit.unit}_peaks.xls", unit=units.itertuples()),
         "results/plot_heatmap/heatmap.png",
         "results/plot_profile/profile.png",
-        "qc/multiqc_report.html"
-
+        "results/peak_analysis/broadpeakAnnotationDistributionPlot.pdf",
+        "results/peak_analysis/broadPeakAnnoList.Rdata",
+        expand("results/peak_analysis/{unit.sample}-{unit.unit}_peaks.broadPeak.annotated.tsv.gz", unit=units.itertuples()),
+        expand("results/peak_analysis/{unit.sample}-{unit.unit}_peaks.broadPeak.annotated.summary.txt", unit=units.itertuples()),
+        "results/peak_analysis/broadPeakAvgProfilePlot.pdf",
+        "results/peak_analysis/broadPeakHeatmapPlot.pdf",
+        "results/peak_analysis/broadPeakMatrixList.Rdata",
+         "qc/multiqc_report.html"
+ 
 ##### setup singularity #####
 
 # this container defines the underlying OS for each job when using the workflow
@@ -51,5 +58,5 @@ include: "rules/qc.smk"
 include: "rules/align.smk"
 include: "rules/coverage_plots.smk"
 include: "rules/macs.smk"
-#include: "rules/diffexp.smk"
+include: "rules/peak_analysis.smk"
 
