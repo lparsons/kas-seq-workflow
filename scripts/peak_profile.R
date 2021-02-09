@@ -1,33 +1,36 @@
 #!/usr/bin/env Rscript --vanilla
 
-library(BiocManager, quietly=TRUE)
-library(ChIPseeker, quietly=TRUE)
-library(cowplot, quietly=TRUE)
-library(readr, quietly=TRUE)
-library(argparser, quietly=TRUE)
+library(BiocManager, quietly = TRUE)
+library(ChIPseeker, quietly = TRUE)
+library(cowplot, quietly = TRUE)
+library(readr, quietly = TRUE)
+library(argparser, quietly = TRUE)
 
 p <- arg_parser("Profile of peaks binding to TSS regions")
-p <- add_argument(p, "--peak_files", help="Peak files to annotate and compare",
-                  nargs=Inf)
+p <- add_argument(p, "--peak_files",
+                  help = "Peak files to annotate and compare",
+                  nargs = Inf)
 p <- add_argument(p, "--txdb_file",
-                  help="File to load txdb using AnnotationDbi::loadDb()")
+                  help = "File to load txdb using AnnotationDbi::loadDb()")
 p <- add_argument(p, "--annotation_file",
-                  help="GFF3 or GTF file of gene annotations used to build txdb")
+                  help = paste0("GFF3 or GTF file of gene annotations used ",
+                                "to build txdb"))
 p <- add_argument(p, "--txdb",
-                  help="Name of txdb package to install from Bioconductor")
+                  help = "Name of txdb package to install from Bioconductor")
 
 # Add an optional arguments
-p <- add_argument(p, "--names", help="Sample names for each peak file",
-                  nargs=Inf)
+p <- add_argument(p, "--names", help = "Sample names for each peak file",
+                  nargs = Inf)
 p <- add_argument(p, "--tag_profile_plot",
-                  help="Average peak profile plot filename",
-                  default="avgProfilePlot.pdf")
+                  help = "Average peak profile plot filename",
+                  default = "avgProfilePlot.pdf")
 p <- add_argument(p, "--tag_heatmap_plot",
-                  help="Tag heatmap plot PDF filename",
-                  default="tagHeatmapPlot.pdf")
+                  help = "Tag heatmap plot PDF filename",
+                  default = "tagHeatmapPlot.pdf")
 p <- add_argument(p, "--tag_matrix_list",
-                  help="List of outputs from getTagMatrix CHiPseeker function",
-                  default="tagMatrixList.Rdata")
+                  help = paste0("List of outputs from getTagMatrix ",
+                                "CHiPseeker function"),
+                  default = "tag_matrix_list.Rdata")
 
 # Parse arguments (interactive, snakemake, or command line)
 if (exists("snakemake")) {
@@ -44,9 +47,9 @@ if (exists("snakemake")) {
   # Arguments supplied inline (for debug/testing when running interactively)
   print("Running interactively...")
   input_file <- c("results_2020-12-03/macs2/D701-lane1_peaks.broadPeak",
-                  "results_2020-12-03/macs2/D702-lane1_peaks.broadPeak", 
-                  "results_2020-12-03/macs2/D703-lane1_peaks.broadPeak", 
-                  "results_2020-12-03/macs2/D704-lane1_peaks.broadPeak", 
+                  "results_2020-12-03/macs2/D702-lane1_peaks.broadPeak",
+                  "results_2020-12-03/macs2/D703-lane1_peaks.broadPeak",
+                  "results_2020-12-03/macs2/D704-lane1_peaks.broadPeak",
                   "results_2020-12-03/macs2/D705-lane1_peaks.broadPeak")
   names <- c("D701", "D702", "D703", "D704", "D705")
   annotation_file <- "genomes/hg38/annotation/Homo_sapiens.GRCh38.101.gtf"
@@ -57,31 +60,31 @@ if (exists("snakemake")) {
   print(argv)
 } else {
   # Arguments from command line
-  argv <- parse_args(p)  
+  argv <- parse_args(p)
   print(argv)
 }
 
 # Set names
 if (!anyNA(argv$names)) {
-  peakFileNames <- argv$names
+  peak_file_names <- argv$names
 } else {
-  peakFileNames <- sapply(argv$peak_files, basename)
+  peak_file_names <- sapply(argv$peak_files, basename)
 }
-names(argv$peak_files) <- peakFileNames
+names(argv$peak_files) <- peak_file_names
 
 # Get txdb object
 if (!is.na(argv$txdb)) {
   # Load (install if needed) txdb from bioconductor
-  library(pacman, quietly=TRUE)
+  library(pacman, quietly = TRUE)
   pacman::p_load(argv$txdb, character.only = TRUE)
   txdb <- eval(parse(text = argv$txdb))
 } else if (!is.na(argv$txdb_file)) {
   # Load txdb
-  library(AnnotationDbi, quietly=TRUE)
+  library(AnnotationDbi, quietly = TRUE)
   txdb <- AnnotationDbi::loadDb(argv$txdb_file)
 } else if (!is.na(argv$annotation_file)) {
   # Create txdb object from supplied annotation file
-  library(GenomicFeatures, quietly=TRUE)
+  library(GenomicFeatures, quietly = TRUE)
   txdb <- GenomicFeatures::makeTxDbFromGFF(argv$annotation_file)
 } else {
   stop("Must specify one of --txdb, --txdb_file, or --annotation_file")
@@ -89,15 +92,15 @@ if (!is.na(argv$txdb)) {
 
 
 # Profile of peaks binding to TSS regions
-promoter <- getPromoters(TxDb=txdb, upstream=3000, downstream=3000)
-tagMatrixList <- lapply(argv$peak_files, getTagMatrix, windows=promoter)
-saveRDS(tagMatrixList, file = argv$tag_matrix_list)
+promoter <- getPromoters(TxDb = txdb, upstream = 3000, downstream = 3000)
+tag_matrix_list <- lapply(argv$peak_files, getTagMatrix, windows = promoter)
+saveRDS(tag_matrix_list, file = argv$tag_matrix_list)
 
 # Average tag profile
-tagProfilePlot <- plotAvgProf(tagMatrixList, xlim=c(-3000, 3000))
+tag_profile_plot <- plotAvgProf(tag_matrix_list, xlim = c(-3000, 3000))
 save_plot(
   filename = argv$tag_profile_plot,
-  plot = tagProfilePlot,
+  plot = tag_profile_plot,
   base_height = 14,
   base_width = 14
 )
@@ -109,6 +112,5 @@ pdf(
   height = 14,
   width = 14
 )
-tagHeatmap(tagMatrixList, xlim=c(-3000, 3000), color=NULL)
+tagHeatmap(tag_matrix_list, xlim = c(-3000, 3000), color = NULL)
 dev.off()
-
