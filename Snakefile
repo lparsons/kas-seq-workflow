@@ -16,7 +16,6 @@ units = pd.read_table(config["units"], dtype=str).set_index(["sample", "unit"], 
 units.index = units.index.set_levels([i.astype(str) for i in units.index.levels])  # enforce str in index
 validate(units, schema="schemas/units.schema.yaml")
 
-
 ##### target rules #####
 
 rule all:
@@ -33,11 +32,13 @@ rule all:
         "results/peak_analysis/broadPeakAnnoList.Rdata",
         expand("results/peak_analysis/{unit.sample}-{unit.unit}_peaks.broadPeak.annotated.tsv.gz", unit=units.itertuples()),
         expand("results/peak_analysis/{unit.sample}-{unit.unit}_peaks.broadPeak.annotated.summary.txt", unit=units.itertuples()),
+        expand("results/peak_analysis/{unit.sample}-{unit.unit}_broadpeak_overlap_enrichment.tsv", unit=units.itertuples()),
         "results/peak_analysis/broadPeakAvgProfilePlot.pdf",
         "results/peak_analysis/broadPeakHeatmapPlot.pdf",
         "results/peak_analysis/broadPeakMatrixList.Rdata",
+        "results/peak_analysis/broadPeakAnnotationVennDiagram.pdf",
          "qc/multiqc_report.html"
- 
+
 ##### setup singularity #####
 
 # this container defines the underlying OS for each job when using the workflow

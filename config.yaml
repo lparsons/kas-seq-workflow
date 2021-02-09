@@ -24,6 +24,7 @@ ref:
   # the length of the "mappable" genome
   # https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html
   effective_genome_size: "2701495761"
+
 pca:
   labels:
     # columns of sample sheet to use for PCA
@@ -36,9 +37,12 @@ diffexp:
       - treated
       - untreated
 
+peak_overlap_enrichment:
+  nshuffle: "10000"
+  p_adjust_method: "BH"
+
 params:
   fastqc: ""
   bwa-mem2: ""
   cutadapt-se: ""
   cutadapt-pe: ""
-

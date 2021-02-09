@@ -2,7 +2,6 @@
 
 library(BiocManager, quietly=TRUE)
 library(ChIPseeker, quietly=TRUE)
-library(GenomicFeatures, quietly=TRUE)
 library(cowplot, quietly=TRUE)
 library(readr, quietly=TRUE)
 library(argparser, quietly=TRUE)
@@ -10,7 +9,12 @@ library(argparser, quietly=TRUE)
 p <- arg_parser("Profile of peaks binding to TSS regions")
 p <- add_argument(p, "--peak_files", help="Peak files to annotate and compare",
                   nargs=Inf)
-p <- add_argument(p, "--annotation_file", help="GFF3 or GTF file of gene annotations")
+p <- add_argument(p, "--txdb_file",
+                  help="File to load txdb using AnnotationDbi::loadDb()")
+p <- add_argument(p, "--annotation_file",
+                  help="GFF3 or GTF file of gene annotations used to build txdb")
+p <- add_argument(p, "--txdb",
+                  help="Name of txdb package to install from Bioconductor")
 
 # Add an optional arguments
 p <- add_argument(p, "--names", help="Sample names for each peak file",
@@ -30,7 +34,7 @@ if (exists("snakemake")) {
   # Arguments via Snakemake
   argv <- parse_args(p, c(
     "--peak_files", snakemake@input[["peak_files"]],
-    "--annotation_file", snakemake@input[["annotation_file"]],
+    "--txdb_file", snakemake@input[["txdb_file"]],
     "--names", snakemake@params[["names"]],
     "--tag_profile_plot", snakemake@output[["tag_profile_plot"]],
     "--tag_heatmap_plot", snakemake@output[["tag_heatmap_plot"]],
@@ -46,9 +50,10 @@ if (exists("snakemake")) {
                   "results_2020-12-03/macs2/D705-lane1_peaks.broadPeak")
   names <- c("D701", "D702", "D703", "D704", "D705")
   annotation_file <- "genomes/hg38/annotation/Homo_sapiens.GRCh38.101.gtf"
+  txdb_file <- "txdb.db"
   argv <- parse_args(p, c("--peak_files", input_file,
                           "--names", names,
-                          "--annotation_file", annotation_file))
+                          "--txdb_file", txdb_file))
   print(argv)
 } else {
   # Arguments from command line
@@ -64,11 +69,26 @@ if (!anyNA(argv$names)) {
 }
 names(argv$peak_files) <- peakFileNames
 
-# Create txdb object from supplied annotation file
-txdb <- makeTxDbFromGFF(argv$annotation_file)
+# Get txdb object
+if (!is.na(argv$txdb)) {
+  # Load (install if needed) txdb from bioconductor
+  library(pacman, quietly=TRUE)
+  pacman::p_load(argv$txdb, character.only = TRUE)
+  txdb <- eval(parse(text = argv$txdb))
+} else if (!is.na(argv$txdb_file)) {
+  # Load txdb
+  library(AnnotationDbi, quietly=TRUE)
+  txdb <- AnnotationDbi::loadDb(argv$txdb_file)
+} else if (!is.na(argv$annotation_file)) {
+  # Create txdb object from supplied annotation file
+  library(GenomicFeatures, quietly=TRUE)
+  txdb <- GenomicFeatures::makeTxDbFromGFF(argv$annotation_file)
+} else {
+  stop("Must specify one of --txdb, --txdb_file, or --annotation_file")
+}
+
 
 # Profile of peaks binding to TSS regions
-
 promoter <- getPromoters(TxDb=txdb, upstream=3000, downstream=3000)
 tagMatrixList <- lapply(argv$peak_files, getTagMatrix, windows=promoter)
 saveRDS(tagMatrixList, file = argv$tag_matrix_list)
