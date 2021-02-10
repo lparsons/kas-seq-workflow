@@ -17,14 +17,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Setup conda environment
-      - name: Setup conda environment
-        uses: conda-incubator/setup-miniconda@v2
-        with:
-          activate-environment: kas-seq-snakemake-workflow
-          environment-file: environment.yml
-          auto-activate-base: false
-      
       # Runs the Super-Linter action
       - name: Run Super-Linter
         uses: github/super-linter@v3
@@ -32,3 +24,12 @@ jobs:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LINTER_RULES_PATH: /
+          VALIDATE_SNAKEMAKE_LINT: false
+
+      # Snakemake specific linting
+      - name: Run Snakemake Lint
+        uses: snakemake/snakemake-github-action@v1.6.0
+        with:
+          directory: '.'
+          snakefile: 'Snakefile'
+          args: '--lint'

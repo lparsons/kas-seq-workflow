@@ -31,6 +31,8 @@ scripts/.snakemake*
 !report/*
 !rules
 !rules/*
+!schemas
+!schemas/*
 !.gitignore
 !.gitattributes
 !.editorconfig
