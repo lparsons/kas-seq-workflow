@@ -3,6 +3,8 @@ rule samtools_faindex:
         "{sample}.fa",
     output:
         "{sample}.fa.fai",
+    log:
+        "logs/samtools_faindex/{sample}.log",
     params:
         "",  # optional params string
     wrapper:
@@ -64,7 +66,9 @@ rule peak_annotation:
         ),
     params:
         names=expand("{unit.sample}-{unit.unit}", unit=units.itertuples()),
-        output_dir="results/peak_analysis",
+        output_dir=lambda w, output: os.path.dirname(
+            output.annotation_distribution_plot
+        ),
     resources:
         mem="16G",
     log:
@@ -104,19 +108,6 @@ rule peak_profile:
         "../envs/chipseeker.yml"
     script:
         "../scripts/peak_profile.R"
-
-
-def get_target_broadpeaks(wildcards):
-    query_select = (units["sample"] == wildcards.sample) & (
-        units["unit"] == wildcards.unit
-    )
-    query_unit = units[query_select]
-    target_units = units[~query_select]
-    target_peak_files = expand(
-        "results/macs2/{unit.sample}-{unit.unit}_peaks.broadPeak",
-        unit=target_units.itertuples(),
-    )
-    return target_peak_files
 
 
 rule peak_overlap_enrichment:

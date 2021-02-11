@@ -1,35 +1,35 @@
-def get_fastq(wildcards):
-    return units.loc[(wildcards.sample, wildcards.unit), ["fq1", "fq2"]].dropna()
-
-
 ruleorder: cutadapt_pe > cutadapt
 
 
 rule symlink_fastq_pe:
     input:
-        get_fastq,
+        unpack(get_fastq),
     output:
         fastq1="results/symlink_fastq/{sample}-{unit}.1.fastq.gz",
         fastq2="results/symlink_fastq/{sample}-{unit}.2.fastq.gz",
     log:
         "logs/symlink_fastq/{sample}-{unit}.log",
+    conda:
+        "../envs/coreutils.yml"
     shell:
         """
-        ln -sfr {input[0]:q} {output.fastq1:q}
-        ln -sfr {input[1]:q} {output.fastq2:q}
+        ln -sfr {input.fq1:q} {output.fastq1:q}
+        ln -sfr {input.fq2:q} {output.fastq2:q}
         """
 
 
 rule symlink_fastq:
     input:
-        get_fastq,
+        unpack(get_fastq),
     output:
         fastq="results/symlink_fastq/{sample}-{unit}.fastq.gz",
     log:
         "logs/symlink_fastq/{sample}-{unit}.log",
+    conda:
+        "../envs/coreutils.yml"
     shell:
         """
-        ln -s {input[0]:q} {output.fastq:q} >> {log:q} 2>&1
+        ln -s {input.fq1:q} {output.fastq:q} >> {log:q} 2>&1
         """
 
 

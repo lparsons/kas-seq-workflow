@@ -7,7 +7,7 @@ rule bam_coverage:
     log:
         "logs/bam_coverage/{sample}-{unit}.log",
     params:
-        "",
+        effectiveGenomeSize=config["ref"]["effective_genome_size"],
     threads: 8
     conda:
         "../envs/deeptools.yml"
@@ -17,7 +17,7 @@ rule bam_coverage:
                 -b {input.bam:q} \
                 -o {output:q} \
                 --normalizeUsing RPGC \
-                --effectiveGenomeSize {config[ref][effective_genome_size]} \
+                --effectiveGenomeSize {params.effectiveGenomeSize} \
                 > {log:q} 2>&1
         """
 

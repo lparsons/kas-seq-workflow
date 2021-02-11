@@ -11,7 +11,7 @@ rule bwa_mem:
     log:
         "logs/bwa_mem/{sample}-{unit}.log",
     params:
-        index=config["ref"]["fasta"],
+        index=lambda w, input: input.index_amb[:-4],
         extra=r"-R '@RG\tID:{sample}\tSM:{sample}'",
         sort="samtools",  # Can be 'none', 'samtools' or 'picard'.
         sort_order="coordinate",  # Can be 'coordinate' (default) or 'queryname'.
@@ -28,6 +28,8 @@ rule samtools_index:
         "results/dedup/{sample}-{unit}.bam",
     output:
         "results/dedup/{sample}-{unit}.bam.bai",
+    log:
+        "logs/dedup/samtools_index_{sample}-{unit}.log",
     params:
         "",  # optional params string
     wrapper:
@@ -63,7 +65,7 @@ rule bwa_index:
     resources:
         mem="32G",
     params:
-        prefix="{genome}",
+        prefix=lambda w, input: input,
     log:
         "logs/bwa_index/{genome}.log",
     wrapper:
