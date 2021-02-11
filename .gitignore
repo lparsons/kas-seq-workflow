@@ -23,7 +23,7 @@ scripts/.snakemake*
 !resources/*
 !envs
 !envs/*
-!environment.yaml
+!environment.yml
 !LICENSE
 !README.md
 !project_description.yaml
@@ -31,9 +31,14 @@ scripts/.snakemake*
 !report/*
 !rules
 !rules/*
+!schemas
+!schemas/*
 !.gitignore
 !.gitattributes
 !.editorconfig
+!.ecrc
 !.travis.yml
+!.github
+!.github/**
 !.test
 !.test/*

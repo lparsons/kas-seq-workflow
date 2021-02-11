@@ -1,0 +1,94 @@
+$schema: "http://json-schema.org/draft-06/schema#"
+
+description: snakemake configuration file
+
+type: object
+
+properties:
+  samples:
+    type: string
+  units:
+    type: string
+  trimming:
+    type: object
+    properties:
+      skip:
+        type: boolean
+      read1-adapter:
+        type: string
+        pattern: "^[ACGT]+$"
+      read2-adapter:
+        type: string
+        pattern: "^[ACGT]+$"
+    required:
+      - skip
+
+  ref:
+    type: object
+    properties:
+      fasta:
+        type: string
+      annotation:
+        type: string
+      effective_genome_size:
+        type: string
+    required:
+      - fasta
+      - annotation
+      - effective_genome_size
+
+  pca:
+    type: object
+    properties:
+      labels:
+        type: array
+        items:
+          type: string
+    required:
+      - labels
+
+  diffexp:
+    type: object
+    properties:
+      contrasts:
+        type: object
+    required:
+      - contrasts
+
+  peak_overlap_enrichment:
+    type: object
+    properties:
+      nshuffle:
+        type: string
+      p_adjust_method:
+        type: string
+    required:
+      - nshuffle
+      - p_adjust_method
+
+  params:
+    type: object
+    properties:
+      fastqc: 
+        type: string
+      bwa-mem2: 
+        type: string
+      cutadapt-se:
+        type: string
+      cutadapt-pe:
+        type: string
+    required:
+      - fastqc
+      - bwa-mem2
+      - cutadapt-se
+      - cutadapt-pe
+
+required:
+  - samples
+  - units
+  - trimming
+  - ref
+  - pca
+  - diffexp
+  - peak_overlap_enrichment
+  - params

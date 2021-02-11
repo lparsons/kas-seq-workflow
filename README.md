@@ -1,7 +1,7 @@
 # Snakemake workflow: KAS-seq Snakemake Workflow
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥5.27.4-brightgreen.svg)](https://snakemake.bitbucket.io)
-[![Build Status](https://travis-ci.org/lparsons/kas-seq-snakemake-workflow.svg?branch=master)](https://travis-ci.org/snakemake-workflows/kas-seq-snakemake-workflow)
+[![GitHub Super-Linter](https://github.com/lparsons/kas-seq-snakemake-workflow/workflows/Lint%20code%20base/badge.svg)](https://github.com/marketplace/actions/super-linter)
 
 Workflow to perform KAS-seq analysis
 
@@ -14,38 +14,38 @@ Dependencies are installed using [Bioconda](https://bioconda.github.io/) where p
 
 ## Setup environment and run workflow
 
-1.  Clone workflow into working directory
+1. Clone workflow into working directory
 
-    ```
+    ```bash
     git clone <repo> <dir>
     cd <dir>
     ```
 
-2.  Download input data
+2. Download input data
 
-    Copy data from [URL]() to `data` directory
+    Copy data from URL to `data` directory
 
-3.  Edit config as needed
+3. Edit config as needed
 
-    ```
+    ```bash
     nano config.yaml
     ```
 
-4.  Install dependencies into isolated environment
+4. Install dependencies into isolated environment
 
-    ```
+    ```bash
     conda env create -n <project> --file environment.yaml
     ```
 
-5.  Activate environment
+5. Activate environment
 
-    ```
+    ```bash
     source activate <project>
     ```
 
-6.  Execute workflow
+6. Execute workflow
 
-    ```
+    ```bash
     snakemake -n
     ```
 
@@ -53,17 +53,19 @@ Dependencies are installed using [Bioconda](https://bioconda.github.io/) where p
 
     After successful execution, you can create a self-contained interactive HTML report with all results via:
 
-        snakemake --report report.html
+    ```bash
+    snakemake --report report.html
+    ```
 
     This report can, e.g., be forwarded to your collaborators.
 
 
 ## Running workflow on `gen-comp1`
 
-```
+```bash
 snakemake --cluster-config cluster_config.cetus.yaml \
-          --drmaa " --cpus-per-task={cluster.n} --mem={cluster.memory} --qos={cluster.qos}" \
-          --use-conda -w 60 -rp -j 1000
+    --drmaa " --cpus-per-task={cluster.n} --mem={cluster.memory} --qos={cluster.qos}" \
+    --use-conda -w 60 -rp -j 1000
 ```
 
 ## Advanced

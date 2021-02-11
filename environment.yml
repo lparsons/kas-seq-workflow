@@ -1,0 +1,10 @@
+name: kas-seq-snakemake-workflow
+channels:
+    - conda-forge
+    - bioconda
+    - defaults
+dependencies:
+  #- snakemake>=5.25.0,<5.27.4
+    - snakemake==5.25.0
+    - drmaa>=0.7.9
+    - pandas

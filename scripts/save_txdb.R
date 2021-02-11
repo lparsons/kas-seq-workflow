@@ -1,22 +1,22 @@
 #!/usr/bin/env Rscript --vanilla
 
-library(BiocManager, quietly=TRUE)
-library(AnnotationDbi, quietly=TRUE)
-library(readr, quietly=TRUE)
-library(dplyr, quietly=TRUE)
-library(argparser, quietly=TRUE)
+library(BiocManager, quietly = TRUE)
+library(AnnotationDbi, quietly = TRUE)
+library(readr, quietly = TRUE)
+library(dplyr, quietly = TRUE)
+library(argparser, quietly = TRUE)
 
 p <- arg_parser("Get a TXDB object and save for use in other scripts")
 p <- add_argument(p, "txdb_input",
-                  help=paste0("Name of txdb package to install from Bioconductor ",
-                              "or annotation file (GFF3 or GTF) to use to ",
-                              "build a TXDB object"))
+                  help = paste0("Name of txdb package to install from ",
+                                "Bioconductor or annotation file (GFF3 ",
+                                "or GTF) to use to build a TXDB object"))
 p <- add_argument(p, "--chrom_info",
-                  help=paste0("Chromosome info file with columns: ",
+                  help = paste0("Chromosome info file with columns: ",
                   "chrom, length, is_circular (optional)"))
 p <- add_argument(p, "--output",
-                  help="File to save txdb object in",
-                  default="txdb.db")
+                  help = "File to save txdb object in",
+                  default = "txdb.db")
 
 # Parse arguments (interactive, snakemake, or command line)
 if (exists("snakemake")) {
@@ -29,22 +29,22 @@ if (exists("snakemake")) {
 } else if (interactive()) {
   # Arguments supplied inline (for debug/testing when running interactively)
   print("Running interactively...")
-  # txdb_input <- "TxDb.Hsapiens.UCSC.hg19.knownGene"
   txdb_input <- "genomes/hg38/annotation/Homo_sapiens.GRCh38.101.gtf"
-  chrom_info <- "genomes/hg38/genome/fasta/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.fai"
-  argv <- parse_args(p, c(txdb_input, 
+  chrom_info <- paste0("genomes/hg38/genome/fasta/",
+                       "Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa.fai")
+  argv <- parse_args(p, c(txdb_input,
                           "--chrom_info", chrom_info))
   print(argv)
 } else {
   # Arguments from command line
-  argv <- parse_args(p)  
+  argv <- parse_args(p)
   print(argv)
 }
 
 # Build txdb if txdb_input is file
 if (file.exists(argv$txdb_input)) {
   # Create txdb object from supplied annotation file
-  library(GenomicFeatures, quietly=TRUE)
+  library(GenomicFeatures, quietly = TRUE)
   if (!is.na(argv$chrom_info)) {
     # Get chrom info
     is_circular_column <-
@@ -77,10 +77,10 @@ if (file.exists(argv$txdb_input)) {
     txdb <- makeTxDbFromGFF(argv$txdb_input)
   }
 } else {
-  library(pacman, quietly=TRUE)
+  library(pacman, quietly = TRUE)
   # Load (install if needed) txdb from bioconductor
   pacman::p_load(argv$txdb_input, character.only = TRUE)
-  txdb <- eval(parse(text = argv$txdb_input))  
+  txdb <- eval(parse(text = argv$txdb_input))
 }
 
 # Save txdb
