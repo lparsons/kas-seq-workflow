@@ -1,7 +1,7 @@
 # Snakemake workflow: KAS-seq Snakemake Workflow
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥5.27.4-brightgreen.svg)](https://snakemake.bitbucket.io)
-[![GitHub Super-Linter](https://github.com/lparsons/kas-seq-snakemake-workflow/workflows/Lint%20code%20base/badge.svg)](https://github.com/marketplace/actions/super-linter)
+[![GitHub Lint Code Base](https://github.com/lparsons/kas-seq-snakemake-workflow/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
 
 Workflow to perform KAS-seq analysis
 
