@@ -37,4 +37,17 @@ rule callpeak_options:
         "0.67.0/bio/macs2/callpeak"
 
 
-# macs2 callpeak -t KAS-seq_IP.bed -c KAS-seq_Input.bed -n KAS-seq_peaks.bed --broad -g hs --broad-cutoff 0.01 -q 0.01
+rule broadpeak_headers:
+    input:
+        "results/macs2/{sample}-{unit}_peaks.broadPeak",
+    output:
+        "results/macs2/{sample}-{unit}_peaks.broadPeak.withHeaders",
+    log:
+        "logs/macs2/{sample}-{unit}_broadpeak_headers.log",
+    conda:
+        "../envs/coreutils.yml"
+    shell:
+        """
+        echo -e 'chr\tstart\tend\tname\tscore\tstrand\tfold_enrichment\t-log10(pvalue)\t-log10(qvalue)' > {output:q}
+        cat {input:q} >> {output:q}
+        """

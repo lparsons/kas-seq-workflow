@@ -111,7 +111,7 @@ peak_anno_list <- lapply(argv$peak_files, annotatePeak, TxDb = txdb,
 lapply(names(peak_anno_list), function(name) {
   filebase <- file.path(argv$output_dir, basename(argv$peak_files[[name]]))
   write_tsv(as.data.frame(peak_anno_list[[name]]),
-            path = paste0(filebase, ".annotated.tsv.gz"))
+            file = paste0(filebase, ".annotated.tsv.gz"))
   sink(file = paste0(filebase, ".annotated.summary.txt"))
   print(peak_anno_list[[name]])
   sink()

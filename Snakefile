@@ -42,11 +42,11 @@ rule all:
         "results/peak_analysis/broadpeakAnnotationDistributionPlot.pdf",
         "results/peak_analysis/broadPeakAnnoList.Rdata",
         expand(
-            "results/peak_analysis/{unit.sample}-{unit.unit}_peaks.broadPeak.annotated.tsv.gz",
+            "results/peak_analysis/{unit.sample}-{unit.unit}_peaks.broadPeak.withHeaders.annotated.tsv.gz",
             unit=units.itertuples(),
         ),
         expand(
-            "results/peak_analysis/{unit.sample}-{unit.unit}_peaks.broadPeak.annotated.summary.txt",
+            "results/peak_analysis/{unit.sample}-{unit.unit}_peaks.broadPeak.withHeaders.annotated.summary.txt",
             unit=units.itertuples(),
         ),
         expand(

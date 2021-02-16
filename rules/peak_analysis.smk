@@ -28,7 +28,7 @@ rule make_txdb:
 rule peak_annotation:
     input:
         peak_files=expand(
-            "results/macs2/{unit.sample}-{unit.unit}_peaks.broadPeak",
+            "results/macs2/{unit.sample}-{unit.unit}_peaks.broadPeak.withHeaders",
             unit=units.itertuples(),
         ),
         txdb_file="results/peak_analysis/txdb.db",
@@ -45,7 +45,7 @@ rule peak_annotation:
         ),
         annotated_peak_files=report(
             expand(
-                "results/peak_analysis/{unit.sample}-{unit.unit}_peaks.broadPeak.annotated.tsv.gz",
+                "results/peak_analysis/{unit.sample}-{unit.unit}_peaks.broadPeak.withHeaders.annotated.tsv.gz",
                 unit=units.itertuples(),
             ),
             caption="../report/broadpeak_annotation.rst",
@@ -53,7 +53,7 @@ rule peak_annotation:
         ),
         annotated_peak_summary=report(
             expand(
-                "results/peak_analysis/{unit.sample}-{unit.unit}_peaks.broadPeak.annotated.summary.txt",
+                "results/peak_analysis/{unit.sample}-{unit.unit}_peaks.broadPeak.withHeaders.annotated.summary.txt",
                 unit=units.itertuples(),
             ),
             caption="../report/broadpeak_annotation_summary.rst",
@@ -82,7 +82,7 @@ rule peak_annotation:
 rule peak_profile:
     input:
         peak_files=expand(
-            "results/macs2/{unit.sample}-{unit.unit}_peaks.broadPeak",
+            "results/macs2/{unit.sample}-{unit.unit}_peaks.broadPeak.withHeaders",
             unit=units.itertuples(),
         ),
         txdb_file="results/peak_analysis/txdb.db",
@@ -112,7 +112,7 @@ rule peak_profile:
 
 rule peak_overlap_enrichment:
     input:
-        query_peak_file="results/macs2/{sample}-{unit}_peaks.broadPeak",
+        query_peak_file="results/macs2/{sample}-{unit}_peaks.broadPeak.withHeaders",
         target_peak_files=get_target_broadpeaks,
         txdb_file="results/peak_analysis/txdb.db",
     output:
