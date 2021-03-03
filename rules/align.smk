@@ -20,7 +20,7 @@ rule bwa_mem:
         mem="32G",
     threads: 8
     wrapper:
-        "0.67.0/bio/bwa/mem"
+        "0.72.0/bio/bwa/mem"
 
 
 rule samtools_index:
@@ -33,7 +33,7 @@ rule samtools_index:
     params:
         "",  # optional params string
     wrapper:
-        "0.67.0/bio/samtools/index"
+        "0.72.0/bio/samtools/index"
 
 
 rule mark_duplicates:
@@ -50,7 +50,7 @@ rule mark_duplicates:
         mem_mb="10000",
         mem="10G",
     wrapper:
-        "0.67.0/bio/picard/markduplicates"
+        "0.72.0/bio/picard/markduplicates"
 
 
 rule bwa_index:
@@ -65,8 +65,8 @@ rule bwa_index:
     resources:
         mem="32G",
     params:
-        prefix=lambda w, input: input,
+        prefix=lambda w, input: input[0],
     log:
         "logs/bwa_index/{genome}.log",
     wrapper:
-        "0.67.0/bio/bwa/index"
+        "0.72.0/bio/bwa/index"

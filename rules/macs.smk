@@ -34,7 +34,7 @@ rule callpeak_options:
     params:
         "--format BAM --gsize hs --broad-cutoff 0.01 --qvalue 0.01",
     wrapper:
-        "0.67.0/bio/macs2/callpeak"
+        "0.72.0/bio/macs2/callpeak"
 
 
 rule broadpeak_headers:

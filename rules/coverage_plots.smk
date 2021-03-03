@@ -84,7 +84,7 @@ rule plot_heatmap:
     resources:
         mem="100G",
     wrapper:
-        "0.67.0/bio/deeptools/plotheatmap"
+        "0.72.0/bio/deeptools/plotheatmap"
 
 
 rule plot_profile:
@@ -107,4 +107,4 @@ rule plot_profile:
     resources:
         mem="50G",
     wrapper:
-        "0.67.0/bio/deeptools/plotprofile"
+        "0.72.0/bio/deeptools/plotprofile"

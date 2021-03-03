@@ -1,14 +1,14 @@
 rule samtools_faindex:
     input:
-        "{sample}.fa",
+        "{sample}.fasta",
     output:
-        "{sample}.fa.fai",
+        "{sample}.fasta.fai",
     log:
         "logs/samtools_faindex/{sample}.log",
     params:
         "",  # optional params string
     wrapper:
-        "0.68.0/bio/samtools/faidx"
+        "0.72.0/bio/samtools/faidx"
 
 
 rule make_txdb:

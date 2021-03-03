@@ -10,7 +10,7 @@ rule fastqc:
         "logs/fastqc/{sample}-{unit}.{group}.log",
     threads: 1
     wrapper:
-        "0.67.0/bio/fastqc"
+        "0.72.0/bio/fastqc"
 
 
 rule samtools_stats:
@@ -23,7 +23,7 @@ rule samtools_stats:
     log:
         "logs/samtools_stats/{sample}-{unit}.log",
     wrapper:
-        "0.67.0/bio/samtools/stats"
+        "0.72.0/bio/samtools/stats"
 
 
 rule deeptools_plot_coverage:
@@ -201,7 +201,7 @@ rule plot_fingerprint:
         "",
     threads: 8
     wrapper:
-        "0.67.0/bio/deeptools/plotfingerprint"
+        "0.72.0/bio/deeptools/plotfingerprint"
 
 
 rule multiqc:
@@ -239,4 +239,4 @@ rule multiqc:
     log:
         "logs/multiqc.log",
     wrapper:
-        "0.67.0/bio/multiqc"
+        "0.72.0/bio/multiqc"

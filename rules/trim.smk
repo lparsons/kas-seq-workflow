@@ -52,7 +52,7 @@ rule cutadapt_pe:
         "logs/cutadapt/{sample}-{unit}.log",
     threads: 24
     wrapper:
-        "0.67.0/bio/cutadapt/pe"
+        "0.72.0/bio/cutadapt/pe"
 
 
 rule cutadapt:
@@ -69,4 +69,4 @@ rule cutadapt:
         "logs/cutadapt/{sample}-{unit}.log",
     threads: 24
     wrapper:
-        "0.67.0/bio/cutadapt/se"
+        "0.72.0/bio/cutadapt/se"
