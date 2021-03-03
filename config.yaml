@@ -18,9 +18,9 @@ trimming:
 
 ref:
   # reference fasta file
-  fasta: "genomes/hg38/genome/fasta/Homo_sapiens.GRCh38.dna_sm.primary_assembly.fa"
+  fasta: "genomes/hg38_hbv/hg38-nc_003977.fasta"
   # gtf file with transcripts
-  annotation: "genomes/hg38/annotation/Homo_sapiens.GRCh38.101.gtf"
+  annotation: "genomes/hg38_hbv/hg38-nc_003977.gtf"
   # the length of the "mappable" genome
   # https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html
   effective_genome_size: "2701495761"
